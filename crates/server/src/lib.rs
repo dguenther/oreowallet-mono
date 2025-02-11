@@ -27,7 +27,7 @@ use tower_http::cors::{Any, CorsLayer};
 use tracing::{error, info};
 
 use crate::handlers::{
-    account_status_handler, add_transaction_handler, create_transaction_handler,
+    account_status_handler, add_transaction_handler, create_transaction_handler, fee_rates_handler,
     get_balances_handler, get_ores_handler, get_transaction_handler, get_transactions_handler,
     health_check_handler, import_account_handler, latest_block_handler, remove_account_handler,
     rescan_account_handler, update_scan_status_handler,
@@ -157,6 +157,7 @@ pub async fn run_server<N: Network>(
     let no_auth_router = Router::new()
         .route("/import", post(import_account_handler))
         .route("/healthCheck", get(health_check_handler))
+        .route("/feeRates", get(fee_rates_handler))
         .route("/updateScan", post(update_scan_status_handler))
         .with_state(shared_resource.clone());
 

@@ -12,11 +12,11 @@ use crate::{
         RpcExportAccountResponse, RpcGetAccountStatusRequest, RpcGetAccountStatusResponse,
         RpcGetAccountTransactionRequest, RpcGetAccountTransactionResponse, RpcGetBalancesRequest,
         RpcGetBalancesResponse, RpcGetBlockRequest, RpcGetBlockResponse, RpcGetBlocksRequest,
-        RpcGetBlocksResponse, RpcGetLatestBlockResponse, RpcGetTransactionsRequest,
-        RpcGetTransactionsResponse, RpcImportAccountRequest, RpcImportAccountResponse,
-        RpcRemoveAccountRequest, RpcRemoveAccountResponse, RpcResetAccountRequest, RpcResponse,
-        RpcSetAccountHeadRequest, RpcSetAccountHeadRequestV2, RpcSetScanningRequest,
-        SendTransactionRequest, SendTransactionResponse, TransactionStatus,
+        RpcGetBlocksResponse, RpcGetFeeRatesResponse, RpcGetLatestBlockResponse,
+        RpcGetTransactionsRequest, RpcGetTransactionsResponse, RpcImportAccountRequest,
+        RpcImportAccountResponse, RpcRemoveAccountRequest, RpcRemoveAccountResponse,
+        RpcResetAccountRequest, RpcResponse, RpcSetAccountHeadRequest, RpcSetAccountHeadRequestV2,
+        RpcSetScanningRequest, SendTransactionRequest, SendTransactionResponse, TransactionStatus,
     },
     rpc_handler::RpcError,
     stream::ResponseExt,
@@ -245,6 +245,12 @@ impl RpcHandler {
         let resp = self.agent.clone().post(&path).send_json(json!({"id": id}));
         handle_response(resp)
     }
+
+    pub fn get_fee_rates(&self) -> Result<RpcResponse<RpcGetFeeRatesResponse>, OreoError> {
+        let path = format!("http://{}/chain/estimateFeeRates", self.endpoint);
+        let resp = self.agent.clone().get(&path).call();
+        handle_response(resp)
+    }
 }
 
 pub fn handle_response<S: Debug + for<'a> Deserialize<'a>>(
@@ -330,6 +336,16 @@ mod tests {
             "8e36e31d677a47cbd883843a345654c814b1e9ec1e0125bac9031f052ced9174".to_string(),
         );
         println!("asset info: {:?}", result);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    pub fn get_fee_rates_should_work() {
+        let rpc_handler = RpcHandler::new("127.0.0.1:9020".into());
+        let header = rpc_handler.get_latest_block();
+        println!("chain header {:?}", header);
+        let result = rpc_handler.get_fee_rates();
+        println!("fee rates info: {:?}", result);
         assert!(result.is_ok());
     }
 }

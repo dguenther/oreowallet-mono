@@ -491,6 +491,10 @@ pub async fn latest_block_handler(State(shared): State<Arc<SharedState>>) -> imp
     shared.rpc_handler.get_latest_block().into_response()
 }
 
+pub async fn fee_rates_handler(State(shared): State<Arc<SharedState>>) -> impl IntoResponse {
+    shared.rpc_handler.get_fee_rates().into_response()
+}
+
 pub async fn health_check_handler() -> impl IntoResponse {
     Json(json!({"code": 200, "data": "Hello prover!"})).into_response()
 }

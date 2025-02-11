@@ -418,3 +418,10 @@ pub struct RpcAsset {
     pub id: String,
     pub verification: RpcAssetVerification,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RpcGetFeeRatesResponse {
+    pub slow: String,
+    pub average: String,
+    pub fast: String,
+}
